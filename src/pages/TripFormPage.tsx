@@ -3,9 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { createTrip, updateTrip } from '../lib/trips'
 import { useTrip } from '../lib/useTrip'
-import { countDays } from '../lib/date'
+import { countDays, formatDate } from '../lib/date'
 import { BackIcon } from '../components/Icons'
 import { CharacterBubble } from '../components/Character'
+import { DatePickerModal } from '../components/DatePickerModal'
 import type { TripInput } from '../types'
 
 const EMPTY: TripInput = { title: '', destination: '', startDate: '', endDate: '', memo: '' }
@@ -30,6 +31,7 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
   const [form, setForm] = useState<TripInput>(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [picking, setPicking] = useState<'startDate' | 'endDate' | null>(null)
   const backTo = tripId ? `/trips/${tripId}` : '/'
 
   const set = (key: keyof TripInput) => (e: { target: { value: string } }) =>
@@ -38,6 +40,10 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!user) return
+    if (!form.startDate || !form.endDate) {
+      setError('出発日と帰着日を選んでください。')
+      return
+    }
     if (form.endDate < form.startDate) {
       setError('終了日は開始日以降にしてください。')
       return
@@ -87,15 +93,19 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
           行き先
           <input value={form.destination} onChange={set('destination')} placeholder="例：新潟" />
         </label>
-        <div className="row">
-          <label>
-            出発日
-            <input type="date" required value={form.startDate} onChange={set('startDate')} />
-          </label>
-          <label>
-            帰着日
-            <input type="date" required value={form.endDate} onChange={set('endDate')} />
-          </label>
+        <div className="time-fields">
+          {(['startDate', 'endDate'] as const).map((key) => (
+            <div key={key} className="time-field">
+              {key === 'startDate' ? '出発日' : '帰着日'}
+              <button
+                type="button"
+                className={form[key] ? 'time-button date-button' : 'time-button date-button empty'}
+                onClick={() => setPicking(key)}
+              >
+                {form[key] ? formatDate(form[key]) : '日付を選ぶ'}
+              </button>
+            </div>
+          ))}
         </div>
         <label>
           メモ
@@ -108,6 +118,29 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
           {saving ? '保存中…' : tripId ? '保存' : 'しおりを作成'}
         </button>
       </form>
+
+      {picking && (
+        <DatePickerModal
+          title={picking === 'startDate' ? '出発日' : '帰着日'}
+          quote={picking === 'startDate' ? '「いつ出発するですぅ？」' : '「いつ帰ってくるですぅ？」'}
+          value={form[picking]}
+          min={picking === 'endDate' ? form.startDate || undefined : undefined}
+          rangeStart={picking === 'endDate' ? form.startDate || undefined : undefined}
+          rangeEnd={picking === 'startDate' ? form.endDate || undefined : undefined}
+          onDone={(value) => {
+            setForm((f) => {
+              // 出発日を帰着日より後にしたら、帰着日を出発日にそろえる
+              if (picking === 'startDate' && (!f.endDate || f.endDate < value)) {
+                return { ...f, startDate: value, endDate: value }
+              }
+              return { ...f, [picking]: value }
+            })
+            setPicking(null)
+            setError(null)
+          }}
+          onCancel={() => setPicking(null)}
+        />
+      )}
     </main>
   )
 }
