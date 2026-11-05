@@ -45,10 +45,11 @@ service cloud.firestore {
       match /schedules/{scheduleId} {
         allow read, write: if isMember(tripId);
       }
+    }
 
-      match /packingItems/{itemId} {
-        allow read, write: if isMember(tripId);
-      }
+    // 持ち物は本人だけが読み書きできる
+    match /users/{uid}/packingItems/{itemId} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
     }
   }
 }

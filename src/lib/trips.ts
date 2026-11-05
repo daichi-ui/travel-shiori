@@ -20,7 +20,7 @@ import type { Trip, TripInput } from '../types'
 const tripsCol = collection(db, 'trips')
 
 // しおりの中にあるサブコレクション（しおり削除時に一緒に消す）
-const SUB_COLLECTIONS = ['schedules', 'packingItems']
+const SUB_COLLECTIONS = ['schedules']
 
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase()

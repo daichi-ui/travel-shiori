@@ -17,7 +17,7 @@ export function LoginPage() {
 
   return (
     <main className="center">
-      <h1>旅のしおり</h1>
+      <h1 className="brand">旅のしおり</h1>
       <p>友だちと一緒に旅行の予定をつくろう</p>
       <button onClick={handleLogin}>Googleでログイン</button>
       {error && <p className="error">{error}</p>}

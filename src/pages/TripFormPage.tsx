@@ -3,9 +3,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { createTrip, updateTrip } from '../lib/trips'
 import { useTrip } from '../lib/useTrip'
+import { countDays } from '../lib/date'
+import { BackIcon } from '../components/Icons'
 import type { TripInput } from '../types'
 
 const EMPTY: TripInput = { title: '', destination: '', startDate: '', endDate: '', memo: '' }
+const MAX_DAYS = 31
 
 // 新規作成（/trips/new）と編集（/trips/:tripId/edit）の両方で使う
 export function TripFormPage() {
@@ -13,7 +16,7 @@ export function TripFormPage() {
   const tripState = useTrip(tripId)
 
   if (!tripId) return <TripForm initial={EMPTY} />
-  if (tripState.status === 'loading') return <main>読み込み中…</main>
+  if (tripState.status === 'loading') return <main className="page muted">読み込み中…</main>
   if (tripState.status !== 'ready') return <NotFound />
 
   const { title, destination, startDate, endDate, memo } = tripState.trip
@@ -26,6 +29,7 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
   const [form, setForm] = useState<TripInput>(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const backTo = tripId ? `/trips/${tripId}` : '/'
 
   const set = (key: keyof TripInput) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -35,6 +39,10 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
     if (!user) return
     if (form.endDate < form.startDate) {
       setError('終了日は開始日以降にしてください。')
+      return
+    }
+    if (countDays(form.startDate, form.endDate) > MAX_DAYS) {
+      setError(`日程は${MAX_DAYS}日以内にしてください。`)
       return
     }
     setSaving(true)
@@ -52,42 +60,46 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
   }
 
   return (
-    <main>
-      <h1>{tripId ? 'しおりを編集' : '新しいしおり'}</h1>
+    <main className="page">
+      <header className="detail-header">
+        <Link to={backTo} className="icon-button" aria-label="戻る">
+          <BackIcon />
+        </Link>
+        <div className="detail-title">
+          <h1>{tripId ? '旅の情報を編集' : '新しい旅をつくる'}</h1>
+        </div>
+        <span className="icon-button" />
+      </header>
+
       <form className="form" onSubmit={handleSubmit}>
         <label>
-          タイトル
-          <input required value={form.title} onChange={set('title')} placeholder="例：京都旅行" />
+          旅行の名前
+          <input required value={form.title} onChange={set('title')} placeholder="例：新潟旅行" />
         </label>
         <label>
-          目的地
-          <input value={form.destination} onChange={set('destination')} placeholder="例：京都" />
+          行き先
+          <input value={form.destination} onChange={set('destination')} placeholder="例：新潟" />
         </label>
         <div className="row">
           <label>
-            開始日
+            出発日
             <input type="date" required value={form.startDate} onChange={set('startDate')} />
           </label>
           <label>
-            終了日
+            帰着日
             <input type="date" required value={form.endDate} onChange={set('endDate')} />
           </label>
         </div>
         <label>
           メモ
-          <textarea rows={4} value={form.memo} onChange={set('memo')} />
+          <textarea rows={3} value={form.memo} onChange={set('memo')} />
         </label>
 
         {error && <p className="error">{error}</p>}
 
-        <div className="actions">
-          <Link to={tripId ? `/trips/${tripId}` : '/'} className="button secondary">
-            キャンセル
-          </Link>
-          <button type="submit" disabled={saving}>
-            {saving ? '保存中…' : '保存'}
-          </button>
-        </div>
+        <button type="submit" className="primary-large" disabled={saving}>
+          {saving ? '保存中…' : tripId ? '保存' : 'しおりを作成'}
+        </button>
       </form>
     </main>
   )
@@ -95,9 +107,9 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
 
 export function NotFound() {
   return (
-    <main>
-      <p>しおりが見つかりません。削除されたか、メンバーに入っていない可能性があります。</p>
-      <Link to="/">しおり一覧へ戻る</Link>
+    <main className="page">
+      <p>見つかりません。削除されたか、メンバーに入っていない可能性があります。</p>
+      <Link to="/">旅の一覧へ戻る</Link>
     </main>
   )
 }

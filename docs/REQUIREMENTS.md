@@ -43,17 +43,20 @@
 - メンバーは全員、閲覧・編集ができる（権限の差はつけない）
 - 作成者はメンバーを外すことができる
 
-### F4. 日程表
-- 旅行期間の日ごとに分けて表示する
-- 予定の項目: 開始時刻、終了時刻、タイトル、場所、移動手段、メモ
-- 予定の追加・編集・削除・並び替えができる
-- 同じ日の予定は時刻順に並べる（時刻なしの予定は手動で並べた順）
+### F4. 旅程（日程表）
+- 「1日目 11/13(金)」のような日付タブで日ごとに切り替え、予定をタイムラインで表示する
+- 予定の項目: 種類（移動・食事・観光・宿泊・その他）、名前、日付、開始時刻、終了時刻、場所、予約状況（予約なし・これから予約・予約済）、メモ
+- 予定の追加・編集・削除ができる
+- 同じ日の予定は開始時刻順に並べる（時刻なしの予定は最後に、登録順で並べる）
 - 他のメンバーが変更すると、自分の画面にもすぐ反映される
 
 ### F5. 持ち物リスト
+- 旅行に関係なく、Googleアカウントごとに1つのリストを持つ
+- 自分のリストだけが表示され、ほかの人のリストは見えない
 - 持ち物の追加・削除、チェックの付け外しができる
-- 「共通」と「担当者付き（メンバーのだれかが持っていく）」に分けて表示する
-- 他のメンバーが変更すると、自分の画面にもすぐ反映される
+
+### 画面下のタブ
+- 「旅程」と「持ち物」の2つ。「旅程」は旅の一覧、「持ち物」は自分の持ち物リストを開く
 
 ## 4. 非機能要件
 - **スマホ優先**: 旅行中はスマホで見るので、スマホの画面幅で使いやすくする
@@ -66,10 +69,12 @@
 | 画面 | 内容 |
 |---|---|
 | ログイン | 「Googleでログイン」ボタン |
-| しおり一覧 | 自分が参加しているしおりのカード一覧、新規作成ボタン |
-| しおり作成・編集 | タイトル、目的地、期間、メモの入力フォーム |
-| しおり詳細 | 「日程表」「持ち物」のタブで切り替える |
+| 旅程（旅の一覧） | 自分が参加している旅のカード一覧、「新しい旅をつくる」ボタン |
+| 旅の作成・編集 | 旅行の名前、行き先、出発日・帰着日、メモの入力フォーム |
+| 旅の詳細 | 日付タブ、共有人数、予定のタイムライン、「予定を追加」ボタン |
+| 予定の追加・編集 | 種類、名前、日付、時刻、場所、予約状況、メモ |
 | メンバー設定 | メンバーの一覧と追加・削除（作成者のみ） |
+| 持ち物 | 自分だけの持ち物チェックリスト |
 
 ## 6. データ構造（Firestore）
 
@@ -81,32 +86,34 @@ trips/{tripId}
   endDate: string
   memo: string
   ownerUid: string
+  ownerEmail: string
   memberEmails: string[]   // 作成者を含む
   createdAt: timestamp
   updatedAt: timestamp
 
 trips/{tripId}/schedules/{scheduleId}
   date: string             // "2026-12-01"
-  startTime: string | null // "09:30"
-  endTime: string | null
+  startTime: string        // "09:30"、未定なら ""
+  endTime: string
   title: string
+  category: "move" | "food" | "sightseeing" | "hotel" | "other"
+  reservation: "none" | "todo" | "done"
   place: string
-  transport: string
   memo: string
-  order: number
+  createdAt: timestamp
 
-trips/{tripId}/packingItems/{itemId}
+users/{uid}/packingItems/{itemId}
   name: string
   checked: boolean
-  assigneeEmail: string | null  // null なら共通
-  order: number
+  createdAt: timestamp
 ```
 
 ### セキュリティルールの方針
 - `trips/{tripId}`: ログイン中のユーザーのメールアドレスが `memberEmails` に含まれていれば読み書きできる
-- 作成時は、自分のメールアドレスが `memberEmails` に入っていて、`ownerUid` が自分であることを確認する
-- 削除と `memberEmails` の変更は作成者（`ownerUid`）だけができる
-- サブコレクション（`schedules`, `packingItems`）は、親の `trips` のメンバーであれば読み書きできる
+- 作成時は、`ownerUid`・`ownerEmail` が自分で、`memberEmails` が自分だけであることを確認する
+- 削除と `memberEmails` の変更は作成者（`ownerUid`）だけができる。作成者はメンバーから外せない
+- `schedules` は、親の `trips` のメンバーであれば読み書きできる
+- `users/{uid}/packingItems` は本人だけが読み書きできる
 
 ## 7. 今後の候補（MVPには含めない）
 - 費用管理・割り勘の計算
