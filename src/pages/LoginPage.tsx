@@ -23,6 +23,11 @@ export function LoginPage() {
         <img className="pink" src={CHARACTERS.pink.src} alt="" />
       </div>
       <h1 className="brand">旅のしおり</h1>
+      <div className="login-squad" aria-hidden="true">
+        {(['giroro', 'tamama', 'kururu', 'dororo'] as const).map((name) => (
+          <img key={name} src={CHARACTERS[name].src} alt="" width={60} height={60} />
+        ))}
+      </div>
       <p className="speech">みんなで旅の作戦会議であります！</p>
       <button className="primary-large" onClick={handleLogin}>
         Googleでログイン

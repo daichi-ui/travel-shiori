@@ -1289,3 +1289,58 @@ select:focus {
   justify-content: center;
   padding: 12px 0;
 }
+
+/* ---------- キャラのタイル画像 ---------- */
+
+.category-avatar {
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 0 rgb(43 58 34 / 0.35));
+}
+
+.form .chip .category-avatar {
+  margin: -4px 0;
+  filter: none;
+}
+
+.trip-thumb-img {
+  flex-shrink: 0;
+  align-self: center;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 0 rgb(43 58 34 / 0.3));
+}
+
+.dialog-character {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-character img {
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 0 rgb(43 58 34 / 0.3));
+}
+
+.dialog-quote {
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 2px;
+}
+
+.dialog-character.compact .dialog-quote {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.login-squad {
+  display: flex;
+  gap: 6px;
+}
+
+.login-squad img:nth-child(odd) {
+  transform: rotate(-6deg);
+}
+
+.login-squad img:nth-child(even) {
+  transform: rotate(5deg) translateY(4px);
+}

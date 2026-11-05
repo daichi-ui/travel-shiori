@@ -5,7 +5,8 @@ import { useSchedules } from '../lib/useSchedules'
 import { createSchedule, deleteSchedule, updateSchedule } from '../lib/schedules'
 import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
-import { BackIcon, CategoryIcon, LinkIcon } from '../components/Icons'
+import { BackIcon, LinkIcon } from '../components/Icons'
+import { CategoryAvatar } from '../components/Character'
 import { shortLink, toLink } from '../lib/url'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { TimePickerModal } from '../components/TimePickerModal'
@@ -142,7 +143,7 @@ function ScheduleForm({
                 checked={form.category === c}
                 onChange={() => setForm((f) => ({ ...f, category: c }))}
               />
-              <CategoryIcon category={c} />
+              <CategoryAvatar category={c} size={26} />
               {CATEGORIES[c]}
             </label>
           ))}

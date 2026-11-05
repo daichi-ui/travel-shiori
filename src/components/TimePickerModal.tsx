@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { CHARACTERS } from './Character'
 
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5)
 
@@ -73,7 +74,13 @@ export function TimePickerModal({
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2>{title}</h2>
+        <div className="dialog-character compact">
+          <img src={CHARACTERS.kururu.src} alt="" width={52} height={52} />
+          <div>
+            <h2>{title}</h2>
+            <p className="dialog-quote">「クーックックッ…時間は正確にな」</p>
+          </div>
+        </div>
 
         <input
           className="time-input"

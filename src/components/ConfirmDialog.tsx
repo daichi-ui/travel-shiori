@@ -1,3 +1,5 @@
+import { CHARACTERS } from './Character'
+
 // window.confirm はアプリ内ブラウザなどで表示されず常にキャンセル扱いになることがあるため、自前で出す
 export function ConfirmDialog({
   message,
@@ -19,7 +21,13 @@ export function ConfirmDialog({
         aria-label={message}
         onClick={(e) => e.stopPropagation()}
       >
-        <p>{message}</p>
+        <div className="dialog-character">
+          <img src={CHARACTERS.giroro.src} alt="" width={72} height={72} />
+          <div>
+            <p className="dialog-quote">「本当にいいのか…？」</p>
+            <p>{message}</p>
+          </div>
+        </div>
         <div className="dialog-actions">
           <button type="button" className="secondary" onClick={onCancel}>
             キャンセル

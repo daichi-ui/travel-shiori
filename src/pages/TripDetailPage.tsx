@@ -8,7 +8,6 @@ import { formatPeriod, formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
 import {
   BackIcon,
-  CategoryIcon,
   ChevronIcon,
   LinkIcon,
   MoreIcon,
@@ -16,7 +15,7 @@ import {
   UsersIcon,
 } from '../components/Icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import { CharacterBubble } from '../components/Character'
+import { CategoryAvatar, CharacterBubble } from '../components/Character'
 import { shortLink, toLink } from '../lib/url'
 import { RESERVATIONS, type Schedule } from '../types'
 
@@ -150,9 +149,7 @@ function ScheduleRow({ tripId, schedule: s }: { tripId: string; schedule: Schedu
       </div>
       {/* カード全体は編集画面へのリンク。URL だけは上に重ねて別タブで開く（リンクの入れ子を避ける） */}
       <div className="schedule-card">
-        <span className={`category-icon category-${s.category}`}>
-          <CategoryIcon category={s.category} />
-        </span>
+        <CategoryAvatar category={s.category} />
         <span className="schedule-body">
           <Link to={`/trips/${tripId}/schedules/${s.id}`} className="stretched-link">
             <strong>{s.title}</strong>

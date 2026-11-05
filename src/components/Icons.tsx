@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import type { Category } from '../types'
 
 function Svg({ children, size = 22 }: { children: ReactNode; size?: number }) {
   return (
@@ -75,33 +74,4 @@ export const TrashIcon = () => (
   <Svg size={18}>
     <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
   </Svg>
-)
-
-const categoryPaths: Record<Category, ReactNode> = {
-  move: (
-    <>
-      <rect x="6" y="3" width="12" height="14" rx="3" />
-      <path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4" />
-      <circle cx="9" cy="14" r=".6" fill="currentColor" />
-      <circle cx="15" cy="14" r=".6" fill="currentColor" />
-    </>
-  ),
-  food: <path d="M7 3v8M5 3v5a2 2 0 004 0V3M7 11v10M16 21V3c-2 1.5-3 4-3 7h3" />,
-  sightseeing: (
-    <>
-      <path d="M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11z" />
-      <circle cx="12" cy="10" r="2" />
-    </>
-  ),
-  hotel: <path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 00-3-3h-7v5M7 11.5a1.5 1.5 0 100-.01" />,
-  other: (
-    <>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 8v4l2.5 2" />
-    </>
-  ),
-}
-
-export const CategoryIcon = ({ category }: { category: Category }) => (
-  <Svg>{categoryPaths[category] ?? categoryPaths.other}</Svg>
 )

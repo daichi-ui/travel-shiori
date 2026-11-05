@@ -4,6 +4,7 @@ import { useTrip } from '../lib/useTrip'
 import { NotFound } from './TripFormPage'
 import { MembersSection } from '../components/MembersSection'
 import { BackIcon } from '../components/Icons'
+import { CharacterBubble } from '../components/Character'
 
 export function MembersPage() {
   const { tripId } = useParams()
@@ -26,6 +27,7 @@ export function MembersPage() {
         </div>
         <span className="icon-button" />
       </header>
+      <CharacterBubble character="tamama" text="みんなを招待して、いっしょに作戦を立てるですぅ！" size={80} />
       <MembersSection trip={trip} isOwner={trip.ownerUid === user?.uid} />
     </main>
   )

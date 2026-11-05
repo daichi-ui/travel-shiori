@@ -5,6 +5,7 @@ import { createTrip, updateTrip } from '../lib/trips'
 import { useTrip } from '../lib/useTrip'
 import { countDays } from '../lib/date'
 import { BackIcon } from '../components/Icons'
+import { CharacterBubble } from '../components/Character'
 import type { TripInput } from '../types'
 
 const EMPTY: TripInput = { title: '', destination: '', startDate: '', endDate: '', memo: '' }
@@ -70,6 +71,12 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
         </div>
         <span className="icon-button" />
       </header>
+
+      <CharacterBubble
+        character="keroroTile"
+        size={80}
+        text={tripId ? '作戦を変更するであります！' : '新しい旅の作戦開始であります！'}
+      />
 
       <form className="form" onSubmit={handleSubmit}>
         <label>
