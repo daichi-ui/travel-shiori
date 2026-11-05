@@ -5,9 +5,8 @@ import { useSchedules } from '../lib/useSchedules'
 import { createSchedule, deleteSchedule, updateSchedule } from '../lib/schedules'
 import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
-import { BackIcon, LinkIcon } from '../components/Icons'
-import { CategoryAvatar } from '../components/Character'
-import { shortLink, toLink } from '../lib/url'
+import { BackIcon, CategoryIcon } from '../components/Icons'
+import { toLink } from '../lib/url'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { TimePickerModal } from '../components/TimePickerModal'
 import {
@@ -70,7 +69,6 @@ function ScheduleForm({
   const [error, setError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [picking, setPicking] = useState<'startTime' | 'endTime' | null>(null)
-  const [editingUrl, setEditingUrl] = useState(false)
   const link = toLink(form.url)
   const backTo = `/trips/${trip.id}?day=${initial.date}`
 
@@ -143,7 +141,7 @@ function ScheduleForm({
                 checked={form.category === c}
                 onChange={() => setForm((f) => ({ ...f, category: c }))}
               />
-              <CategoryAvatar category={c} size={26} />
+              <CategoryIcon category={c} />
               {CATEGORIES[c]}
             </label>
           ))}
@@ -190,35 +188,28 @@ function ScheduleForm({
           <input value={form.place} onChange={set('place')} />
         </label>
 
-        {/* URL が入っていて編集中でなければ、押すと別タブで開くリンクとして表示する */}
-        {link && !editingUrl ? (
-          <div className="time-field">
-            URL
-            <div className="url-link-row">
-              <a href={link} target="_blank" rel="noopener noreferrer" className="url-link">
-                <LinkIcon />
-                <span>{shortLink(link)}</span>
-              </a>
-              <button type="button" className="text-button" onClick={() => setEditingUrl(true)}>
-                変更
-              </button>
-            </div>
-          </div>
-        ) : (
-          <label>
-            URL
+        {/* 入力欄は普通に編集、右の「開く」で別タブに開く */}
+        <div className="time-field">
+          <label htmlFor="schedule-url">URL</label>
+          <div className="url-row">
             <input
+              id="schedule-url"
               inputMode="url"
               autoCapitalize="off"
               autoCorrect="off"
               value={form.url}
               onChange={set('url')}
-              onFocus={() => setEditingUrl(true)}
-              onBlur={() => setEditingUrl(false)}
-              autoFocus={editingUrl}
             />
-          </label>
-        )}
+            <button
+              type="button"
+              className="open-button"
+              disabled={!link}
+              onClick={() => link && window.open(link, '_blank', 'noopener,noreferrer')}
+            >
+              開く
+            </button>
+          </div>
+        </div>
 
         <fieldset className="chips">
           <legend>予約</legend>

@@ -73,7 +73,7 @@ function TripForm({ tripId, initial }: { tripId?: string; initial: TripInput }) 
       </header>
 
       <CharacterBubble
-        character="keroroTile"
+        character="keroro"
         size={80}
         text={tripId ? '作戦を変更するであります！' : '新しい旅の作戦開始であります！'}
       />

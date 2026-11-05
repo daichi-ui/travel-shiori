@@ -18,10 +18,7 @@ export function LoginPage() {
 
   return (
     <main className="center">
-      <div className="login-characters" aria-hidden="true">
-        <img className="keroro" src={CHARACTERS.keroro.src} alt="" />
-        <img className="pink" src={CHARACTERS.pink.src} alt="" />
-      </div>
+      <img className="login-hero" src={CHARACTERS.keroro.src} alt="" width={150} height={150} />
       <h1 className="brand">旅のしおり</h1>
       <div className="login-squad" aria-hidden="true">
         {(['giroro', 'tamama', 'kururu', 'dororo'] as const).map((name) => (

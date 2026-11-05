@@ -56,15 +56,15 @@ export function PackingPage() {
       </header>
 
       <CharacterBubble
-        character="pink"
+        character="giroro"
         reverse
         size={76}
         text={
           !items?.length
-            ? 'わすれものチェックしよ♡ 持っていくものを追加してね！'
+            ? '装備の確認は基本中の基本だ！持っていくものを追加しろ！'
             : done === items.length
-              ? '準備かんぺき！いってらっしゃい♡'
-              : `あと${items.length - done}個！わすれものないかな？`
+              ? '装備は万全だな。よし、出撃だ！'
+              : `あと${items.length - done}個…装備の確認を怠るな！`
         }
       />
 

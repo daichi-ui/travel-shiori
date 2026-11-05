@@ -8,6 +8,7 @@ import { formatPeriod, formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
 import {
   BackIcon,
+  CategoryIcon,
   ChevronIcon,
   LinkIcon,
   MoreIcon,
@@ -15,7 +16,7 @@ import {
   UsersIcon,
 } from '../components/Icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import { CategoryAvatar, CharacterBubble } from '../components/Character'
+import { CharacterBubble } from '../components/Character'
 import { shortLink, toLink } from '../lib/url'
 import { RESERVATIONS, type Schedule } from '../types'
 
@@ -112,7 +113,7 @@ export function TripDetailPage() {
       {schedules === null && <p className="muted">読み込み中…</p>}
       {schedules !== null && daySchedules.length === 0 && (
         <div className="empty-character">
-          <CharacterBubble character="pink" text="この日の予定はまだないよ♡ 下のボタンから追加してね！" size={76} />
+          <CharacterBubble character="dororo" text="この日の予定はまだないでござる。下のボタンから追加するでござる！" size={76} />
         </div>
       )}
 
@@ -149,7 +150,9 @@ function ScheduleRow({ tripId, schedule: s }: { tripId: string; schedule: Schedu
       </div>
       {/* カード全体は編集画面へのリンク。URL だけは上に重ねて別タブで開く（リンクの入れ子を避ける） */}
       <div className="schedule-card">
-        <CategoryAvatar category={s.category} />
+        <span className={`category-icon category-${s.category}`}>
+          <CategoryIcon category={s.category} />
+        </span>
         <span className="schedule-body">
           <Link to={`/trips/${tripId}/schedules/${s.id}`} className="stretched-link">
             <strong>{s.title}</strong>
