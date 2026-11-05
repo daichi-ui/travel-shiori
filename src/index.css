@@ -120,6 +120,45 @@ button.danger {
   gap: 12px;
 }
 
+.member-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.member-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  word-break: break-all;
+}
+
+.badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 12px;
+}
+
+button.small {
+  padding: 4px 10px;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.small-text {
+  font-size: 13px;
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+}
+
 input,
 textarea {
   font: inherit;

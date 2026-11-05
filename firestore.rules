@@ -22,12 +22,21 @@ service cloud.firestore {
 
       allow create: if signedIn()
         && request.resource.data.ownerUid == request.auth.uid
-        && myEmail() in request.resource.data.memberEmails;
+        && request.resource.data.ownerEmail == myEmail()
+        && request.resource.data.memberEmails == [myEmail()];
 
       // メンバーは編集できるが、作成者とメンバー構成は作成者しか変えられない
+      // 作成者をメンバーから外すことはできない
       allow update: if signedIn()
         && myEmail() in resource.data.memberEmails
         && request.resource.data.ownerUid == resource.data.ownerUid
+        // ownerEmail が無い古いしおりは、作成者が自分のメールアドレスで補える
+        && ('ownerEmail' in resource.data
+            ? request.resource.data.ownerEmail == resource.data.ownerEmail
+            : resource.data.ownerUid == request.auth.uid
+              && request.resource.data.ownerEmail == myEmail())
+        && request.resource.data.ownerEmail in request.resource.data.memberEmails
+        && request.resource.data.memberEmails.size() <= 20
         && (resource.data.ownerUid == request.auth.uid
             || request.resource.data.memberEmails == resource.data.memberEmails);
 

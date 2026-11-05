@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { deleteTrip } from '../lib/trips'
+import { backfillOwnerEmail, deleteTrip } from '../lib/trips'
 import { useTrip } from '../lib/useTrip'
 import { formatPeriod } from '../lib/date'
 import { NotFound } from './TripFormPage'
+import { MembersSection } from '../components/MembersSection'
 
 export function TripDetailPage() {
   const { tripId } = useParams()
@@ -12,12 +13,16 @@ export function TripDetailPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [deleting, setDeleting] = useState(false)
+  const trip = tripState.status === 'ready' ? tripState.trip : null
+
+  useEffect(() => {
+    if (trip && user) backfillOwnerEmail(trip, user).catch(console.error)
+  }, [trip, user])
 
   if (tripState.status === 'loading') return <main>読み込み中…</main>
   if (tripState.status === 'error') return <main className="error">読み込めませんでした。</main>
-  if (tripState.status === 'notFound') return <NotFound />
+  if (!trip) return <NotFound />
 
-  const { trip } = tripState
   const isOwner = trip.ownerUid === user?.uid
 
   const handleDelete = async () => {
@@ -54,6 +59,8 @@ export function TripDetailPage() {
           </button>
         )}
       </div>
+
+      <MembersSection trip={trip} isOwner={isOwner} />
 
       <section>
         <h2>日程表</h2>

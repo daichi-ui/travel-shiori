@@ -8,7 +8,8 @@ export type Trip = {
   endDate: string
   memo: string
   ownerUid: string
-  memberEmails: string[]
+  ownerEmail: string
+  memberEmails: string[] // 作成者を含む
   createdAt: Timestamp | null
   updatedAt: Timestamp | null
 }

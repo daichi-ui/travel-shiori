@@ -1,5 +1,7 @@
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   getDocs,
@@ -59,10 +61,12 @@ export function subscribeTrip(
 }
 
 export async function createTrip(user: User, input: TripInput) {
+  const email = normalizeEmail(user.email ?? '')
   const ref = await addDoc(tripsCol, {
     ...input,
     ownerUid: user.uid,
-    memberEmails: [normalizeEmail(user.email ?? '')],
+    ownerEmail: email,
+    memberEmails: [email],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
@@ -71,6 +75,27 @@ export async function createTrip(user: User, input: TripInput) {
 
 export async function updateTrip(tripId: string, input: TripInput) {
   await updateDoc(doc(tripsCol, tripId), { ...input, updatedAt: serverTimestamp() })
+}
+
+// メンバー機能より前に作ったしおりには ownerEmail が無いので、作成者が開いたときに補う
+export async function backfillOwnerEmail(trip: Trip, user: User) {
+  if (trip.ownerEmail || trip.ownerUid !== user.uid || !user.email) return
+  await updateDoc(doc(tripsCol, trip.id), { ownerEmail: normalizeEmail(user.email) })
+}
+
+// メンバーの追加・削除は作成者だけができる（ルールで制限）
+export async function addMember(tripId: string, email: string) {
+  await updateDoc(doc(tripsCol, tripId), {
+    memberEmails: arrayUnion(normalizeEmail(email)),
+    updatedAt: serverTimestamp(),
+  })
+}
+
+export async function removeMember(tripId: string, email: string) {
+  await updateDoc(doc(tripsCol, tripId), {
+    memberEmails: arrayRemove(email),
+    updatedAt: serverTimestamp(),
+  })
 }
 
 // サブコレクションを先に消してから、しおり本体を消す
