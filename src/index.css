@@ -535,6 +535,106 @@ button.danger {
   margin-bottom: 6px;
 }
 
+.hour-stepper {
+  display: grid;
+  grid-template-columns: 52px 1fr 52px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3f7fb, #e8f0f8);
+  box-shadow: inset 0 1px 2px rgb(31 93 153 / 0.08);
+}
+
+.step-button {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.08),
+    0 4px 10px rgb(31 93 153 / 0.12);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background 0.15s ease;
+}
+
+.step-button:active {
+  transform: scale(0.92);
+  background: var(--primary-soft);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+.hour-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  line-height: 1.1;
+}
+
+.hour-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  color: var(--primary);
+}
+
+.hour-number {
+  min-width: 2ch;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.hour-unit {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hour-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.slide-next {
+  animation: hour-slide-next 0.16s ease-out;
+}
+
+.slide-prev {
+  animation: hour-slide-prev 0.16s ease-out;
+}
+
+@keyframes hour-slide-next {
+  from {
+    transform: translateX(14px);
+    opacity: 0.2;
+  }
+}
+
+@keyframes hour-slide-prev {
+  from {
+    transform: translateX(-14px);
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-next,
+  .slide-prev {
+    animation: none;
+  }
+}
+
 .picker-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

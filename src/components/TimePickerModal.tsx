@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent } from 'react'
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5)
@@ -37,7 +37,8 @@ export function TimePickerModal({
 }) {
   const [draft, setDraft] = useState(value)
   const [error, setError] = useState<string | null>(null)
-  const current = parts(draft)
+  // 「1445」のような手入力もボタンの選択状態に反映する
+  const current = parts(normalizeTime(draft) ?? '')
 
   // 時間・分のボタンを押すと、手入力欄のその部分だけ書き換える
   const setHour = (h: number) => {
@@ -46,6 +47,16 @@ export function TimePickerModal({
   }
   const setMinute = (m: number) => {
     setDraft(`${pad(current?.h ?? 0)}:${pad(m)}`)
+    setError(null)
+  }
+
+  // 矢印ボタンで1時間ずつ増減する（23時の次は0時）。長押しで連続して動く
+  const stepHour = (delta: 1 | -1) => {
+    setDraft((d) => {
+      const p = parts(normalizeTime(d) ?? '')
+      const h = p ? (p.h + delta + 24) % 24 : 9
+      return `${pad(h)}:${pad(p?.m ?? 0)}`
+    })
     setError(null)
   }
 
@@ -83,6 +94,7 @@ export function TimePickerModal({
 
         <div>
           <p className="picker-label">時</p>
+          <HourStepper hour={current?.h ?? null} onStep={stepHour} />
           <div className="picker-grid">
             {HOURS.map((h) => (
               <button
@@ -126,6 +138,71 @@ export function TimePickerModal({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+function hourLabel(h: number) {
+  if (h < 12) return `午前${h}時`
+  return h === 12 ? '正午' : `午後${h - 12}時`
+}
+
+// 「‹ 13時 ›」の形で1時間ずつ動かす。数字は押した向きにスライドする
+function HourStepper({ hour, onStep }: { hour: number | null; onStep: (delta: 1 | -1) => void }) {
+  const [direction, setDirection] = useState<1 | -1>(1)
+  const timers = useRef<{ delay?: number; repeat?: number }>({})
+
+  const stop = () => {
+    window.clearTimeout(timers.current.delay)
+    window.clearInterval(timers.current.repeat)
+    timers.current = {}
+  }
+  useEffect(() => stop, [])
+
+  const step = (delta: 1 | -1) => {
+    setDirection(delta)
+    onStep(delta)
+  }
+
+  const start = (delta: 1 | -1) => (e: PointerEvent<HTMLButtonElement>) => {
+    e.preventDefault() // 長押しで文字選択やメニューが出ないようにする
+    stop()
+    step(delta)
+    timers.current.delay = window.setTimeout(() => {
+      timers.current.repeat = window.setInterval(() => step(delta), 120)
+    }, 400)
+  }
+
+  const arrow = (delta: 1 | -1) => (
+    <button
+      type="button"
+      className="step-button"
+      aria-label={delta === 1 ? '1時間進める' : '1時間戻す'}
+      onPointerDown={start(delta)}
+      onPointerUp={stop}
+      onPointerLeave={stop}
+      onPointerCancel={stop}
+      onContextMenu={(e) => e.preventDefault()}
+      // キーボード操作（Enter / スペース）のときだけ click で動かす
+      onClick={(e) => e.detail === 0 && step(delta)}
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={delta === 1 ? 'M9 5l7 7-7 7' : 'M15 5l-7 7 7 7'} />
+      </svg>
+    </button>
+  )
+
+  return (
+    <div className="hour-stepper">
+      {arrow(-1)}
+      <div className="hour-display" aria-live="polite">
+        <span key={hour ?? 'none'} className={`hour-value ${direction === 1 ? 'slide-next' : 'slide-prev'}`}>
+          <span className="hour-number">{hour === null ? '--' : hour}</span>
+          <span className="hour-unit">時</span>
+        </span>
+        <span className="hour-sub">{hour === null ? '矢印で選べます' : hourLabel(hour)}</span>
+      </div>
+      {arrow(1)}
     </div>
   )
 }
