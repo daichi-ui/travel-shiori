@@ -65,6 +65,12 @@ export const UsersIcon = () => (
   </Svg>
 )
 
+export const LinkIcon = () => (
+  <Svg size={16}>
+    <path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1" />
+  </Svg>
+)
+
 export const TrashIcon = () => (
   <Svg size={18}>
     <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />

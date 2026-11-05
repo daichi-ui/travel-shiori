@@ -10,11 +10,13 @@ import {
   BackIcon,
   CategoryIcon,
   ChevronIcon,
+  LinkIcon,
   MoreIcon,
   PlusIcon,
   UsersIcon,
 } from '../components/Icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { shortLink, toLink } from '../lib/url'
 import { RESERVATIONS, type Schedule } from '../types'
 
 export function TripDetailPage() {
@@ -136,19 +138,29 @@ export function TripDetailPage() {
 }
 
 function ScheduleRow({ tripId, schedule: s }: { tripId: string; schedule: Schedule }) {
+  const link = s.url ? toLink(s.url) : null
   return (
     <>
       <div className="timeline-time">
         <strong>{s.startTime || '--:--'}</strong>
         {s.endTime && <span className="muted">〜{s.endTime}</span>}
       </div>
-      <Link to={`/trips/${tripId}/schedules/${s.id}`} className="schedule-card">
+      {/* カード全体は編集画面へのリンク。URL だけは上に重ねて別タブで開く（リンクの入れ子を避ける） */}
+      <div className="schedule-card">
         <span className={`category-icon category-${s.category}`}>
           <CategoryIcon category={s.category} />
         </span>
         <span className="schedule-body">
-          <strong>{s.title}</strong>
+          <Link to={`/trips/${tripId}/schedules/${s.id}`} className="stretched-link">
+            <strong>{s.title}</strong>
+          </Link>
           {s.place && <span className="muted small-text">{s.place}</span>}
+          {link && (
+            <a href={link} target="_blank" rel="noopener noreferrer" className="url-link small">
+              <LinkIcon />
+              <span>{shortLink(link)}</span>
+            </a>
+          )}
           {s.reservation !== 'none' && (
             <span className={`reservation reservation-${s.reservation}`}>
               {RESERVATIONS[s.reservation]}
@@ -156,7 +168,7 @@ function ScheduleRow({ tripId, schedule: s }: { tripId: string; schedule: Schedu
           )}
         </span>
         <ChevronIcon />
-      </Link>
+      </div>
     </>
   )
 }

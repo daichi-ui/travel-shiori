@@ -5,7 +5,8 @@ import { useSchedules } from '../lib/useSchedules'
 import { createSchedule, deleteSchedule, updateSchedule } from '../lib/schedules'
 import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
-import { BackIcon, CategoryIcon } from '../components/Icons'
+import { BackIcon, CategoryIcon, LinkIcon } from '../components/Icons'
+import { shortLink, toLink } from '../lib/url'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { TimePickerModal } from '../components/TimePickerModal'
 import {
@@ -68,6 +69,8 @@ function ScheduleForm({
   const [error, setError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [picking, setPicking] = useState<'startTime' | 'endTime' | null>(null)
+  const [editingUrl, setEditingUrl] = useState(false)
+  const link = toLink(form.url)
   const backTo = `/trips/${trip.id}?day=${initial.date}`
 
   // 期間外になった予定の日付も選べるようにしておく
@@ -90,7 +93,8 @@ function ScheduleForm({
         ...form,
         title: form.title.trim(),
         place: form.place.trim(),
-        url: form.url.trim(),
+        // 「店名 https://...」のように貼られても、保存するのは URL 部分だけ
+        url: toLink(form.url) ?? form.url.trim(),
       }
       if (scheduleId) await updateSchedule(trip.id, scheduleId, input)
       else await createSchedule(trip.id, input)
@@ -185,17 +189,35 @@ function ScheduleForm({
           <input value={form.place} onChange={set('place')} />
         </label>
 
-        <label>
-          URL
-          <span className="url-row">
-            <input type="url" inputMode="url" value={form.url} onChange={set('url')} />
-            {/^https?:\/\//.test(form.url.trim()) && (
-              <a href={form.url.trim()} target="_blank" rel="noopener noreferrer">
-                開く
+        {/* URL が入っていて編集中でなければ、押すと別タブで開くリンクとして表示する */}
+        {link && !editingUrl ? (
+          <div className="time-field">
+            URL
+            <div className="url-link-row">
+              <a href={link} target="_blank" rel="noopener noreferrer" className="url-link">
+                <LinkIcon />
+                <span>{shortLink(link)}</span>
               </a>
-            )}
-          </span>
-        </label>
+              <button type="button" className="text-button" onClick={() => setEditingUrl(true)}>
+                変更
+              </button>
+            </div>
+          </div>
+        ) : (
+          <label>
+            URL
+            <input
+              inputMode="url"
+              autoCapitalize="off"
+              autoCorrect="off"
+              value={form.url}
+              onChange={set('url')}
+              onFocus={() => setEditingUrl(true)}
+              onBlur={() => setEditingUrl(false)}
+              autoFocus={editingUrl}
+            />
+          </label>
+        )}
 
         <fieldset className="chips">
           <legend>予約</legend>
