@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function myEmail() {
+      return request.auth.token.email;
+    }
+
+    function isMember(tripId) {
+      return signedIn()
+        && myEmail() in get(/databases/$(database)/documents/trips/$(tripId)).data.memberEmails;
+    }
+
+    match /trips/{tripId} {
+      // 一覧取得は「memberEmails に自分を含む」クエリだけ許可される
+      allow read: if signedIn() && myEmail() in resource.data.memberEmails;
+
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && myEmail() in request.resource.data.memberEmails;
+
+      // メンバーは編集できるが、作成者とメンバー構成は作成者しか変えられない
+      allow update: if signedIn()
+        && myEmail() in resource.data.memberEmails
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && (resource.data.ownerUid == request.auth.uid
+            || request.resource.data.memberEmails == resource.data.memberEmails);
+
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+
+      match /schedules/{scheduleId} {
+        allow read, write: if isMember(tripId);
+      }
+
+      match /packingItems/{itemId} {
+        allow read, write: if isMember(tripId);
+      }
+    }
+  }
+}
