@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i)
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5)
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -40,13 +39,9 @@ export function TimePickerModal({
   // 「1445」のような手入力もボタンの選択状態に反映する
   const current = parts(normalizeTime(draft) ?? '')
 
-  // 時間・分のボタンを押すと、手入力欄のその部分だけ書き換える
-  const setHour = (h: number) => {
-    setDraft(`${pad(h)}:${pad(current?.m ?? 0)}`)
-    setError(null)
-  }
+  // 分のボタンを押すと、手入力欄の分だけ書き換える（時が未入力なら矢印と同じ9時から）
   const setMinute = (m: number) => {
-    setDraft(`${pad(current?.h ?? 0)}:${pad(m)}`)
+    setDraft(`${pad(current?.h ?? 9)}:${pad(m)}`)
     setError(null)
   }
 
@@ -95,18 +90,6 @@ export function TimePickerModal({
         <div>
           <p className="picker-label">時</p>
           <HourStepper hour={current?.h ?? null} onStep={stepHour} />
-          <div className="picker-grid">
-            {HOURS.map((h) => (
-              <button
-                key={h}
-                type="button"
-                className={current?.h === h ? 'picker-option active' : 'picker-option'}
-                onClick={() => setHour(h)}
-              >
-                {h}時
-              </button>
-            ))}
-          </div>
         </div>
 
         <div>
