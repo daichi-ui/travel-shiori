@@ -4,16 +4,12 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
+    "public": "hosting-redirect",
+    "redirects": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/:path*",
+        "destination": "https://daichi-ui.github.io/travel-shiori/:path*",
+        "type": 301
       }
     ]
   }

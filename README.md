@@ -8,7 +8,9 @@
 - React + Vite + TypeScript
 - Firebase Authentication（Googleログイン）
 - Cloud Firestore
-- Firebase Hosting（GitHub Actions で main への push 時に自動デプロイ）
+- GitHub Pages（GitHub Actions で main への push 時に自動デプロイ）
+  - 公開URL: https://daichi-ui.github.io/travel-shiori/
+  - 以前の https://travel-shiori-18351.web.app は GitHub Pages へ転送するだけ（`hosting-redirect/`）
 
 ## ローカルで動かす
 
@@ -30,4 +32,5 @@ npx firebase-tools deploy --only firestore:rules --project <プロジェクトID
 | 名前 | 内容 |
 |---|---|
 | `VITE_FIREBASE_*`（6つ） | `.env.local` と同じ値 |
-| `FIREBASE_SERVICE_ACCOUNT_TRAVEL_SHIORI_18351` | Firebase Hosting へデプロイするサービスアカウントの JSON（`firebase init hosting:github` で自動登録） |
+
+Googleログインのため、Firebase コンソールの Authentication > 設定 > 承認済みドメイン に `daichi-ui.github.io` を追加しておくこと。
