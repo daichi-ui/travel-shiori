@@ -14,6 +14,7 @@ import {
   PlusIcon,
   UsersIcon,
 } from '../components/Icons'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { RESERVATIONS, type Schedule } from '../types'
 
 export function TripDetailPage() {
@@ -24,6 +25,7 @@ export function TripDetailPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const trip = tripState.status === 'ready' ? tripState.trip : null
 
   useEffect(() => {
@@ -43,15 +45,13 @@ export function TripDetailPage() {
   const daySchedules = (schedules ?? []).filter((s) => s.date === selectedDay)
 
   const handleDelete = async () => {
-    setMenuOpen(false)
-    if (!confirm(`「${trip.title}」を削除します。予定もすべて消えます。よろしいですか？`)) return
+    setConfirming(false)
     try {
       // 先に一覧へ戻り、削除中にこの画面が「見つかりません」に切り替わるのを避ける
       navigate('/', { replace: true })
       await deleteTrip(trip.id)
     } catch (e) {
       console.error(e)
-      alert('削除できませんでした。もう一度お試しください。')
     }
   }
 
@@ -74,7 +74,7 @@ export function TripDetailPage() {
               <Link to={`/trips/${trip.id}/edit`}>旅の情報を編集</Link>
               <Link to={`/trips/${trip.id}/members`}>メンバー</Link>
               {isOwner && (
-                <button className="danger-text" onClick={handleDelete}>
+                <button className="danger-text" onClick={() => setConfirming(true)}>
                   旅を削除
                 </button>
               )}
@@ -123,6 +123,14 @@ export function TripDetailPage() {
       <Link to={`/trips/${trip.id}/schedules/new?date=${selectedDay}`} className="fab">
         <PlusIcon /> 予定を追加
       </Link>
+
+      {confirming && (
+        <ConfirmDialog
+          message={`「${trip.title}」を削除します。予定もすべて消えます。よろしいですか？`}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirming(false)}
+        />
+      )}
     </main>
   )
 }

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { addMember, normalizeEmail, removeMember } from '../lib/trips'
 import type { Trip } from '../types'
+import { ConfirmDialog } from './ConfirmDialog'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -8,6 +9,7 @@ export function MembersSection({ trip, isOwner }: { trip: Trip; isOwner: boolean
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [removing, setRemoving] = useState<string | null>(null)
 
   const handleAdd = async (e: FormEvent) => {
     e.preventDefault()
@@ -34,7 +36,7 @@ export function MembersSection({ trip, isOwner }: { trip: Trip; isOwner: boolean
   }
 
   const handleRemove = async (member: string) => {
-    if (!confirm(`${member} をメンバーから外します。よろしいですか？`)) return
+    setRemoving(null)
     setBusy(true)
     setError(null)
     try {
@@ -58,7 +60,7 @@ export function MembersSection({ trip, isOwner }: { trip: Trip; isOwner: boolean
               {member === trip.ownerEmail && <span className="badge">作成者</span>}
             </span>
             {isOwner && member !== trip.ownerEmail && (
-              <button className="secondary small" onClick={() => handleRemove(member)} disabled={busy}>
+              <button className="secondary small" onClick={() => setRemoving(member)} disabled={busy}>
                 外す
               </button>
             )}
@@ -86,6 +88,15 @@ export function MembersSection({ trip, isOwner }: { trip: Trip; isOwner: boolean
         </p>
       )}
       {error && <p className="error">{error}</p>}
+
+      {removing && (
+        <ConfirmDialog
+          message={`${removing} をメンバーから外します。よろしいですか？`}
+          confirmLabel="外す"
+          onConfirm={() => handleRemove(removing)}
+          onCancel={() => setRemoving(null)}
+        />
+      )}
     </section>
   )
 }

@@ -6,6 +6,7 @@ import { createSchedule, deleteSchedule, updateSchedule } from '../lib/schedules
 import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
 import { BackIcon, CategoryIcon } from '../components/Icons'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import {
   CATEGORIES,
   RESERVATIONS,
@@ -63,6 +64,7 @@ function ScheduleForm({
   const [form, setForm] = useState<ScheduleInput>(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false)
   const backTo = `/trips/${trip.id}?day=${initial.date}`
 
   // 期間外になった予定の日付も選べるようにしておく
@@ -93,13 +95,13 @@ function ScheduleForm({
   }
 
   const handleDelete = async () => {
-    if (!scheduleId || !confirm(`「${initial.title}」を削除します。よろしいですか？`)) return
+    if (!scheduleId) return
+    // 削除するとこの画面は「見つかりません」になるので、先に旅程へ戻る
+    navigate(backTo, { replace: true })
     try {
-      navigate(backTo, { replace: true })
       await deleteSchedule(trip.id, scheduleId)
     } catch (err) {
       console.error(err)
-      alert('削除できませんでした。もう一度お試しください。')
     }
   }
 
@@ -193,11 +195,24 @@ function ScheduleForm({
           {saving ? '保存中…' : '保存'}
         </button>
         {scheduleId && (
-          <button type="button" className="danger-text" onClick={handleDelete}>
+          <button
+            type="button"
+            className="danger-text"
+            onClick={() => setConfirming(true)}
+            disabled={saving}
+          >
             この予定を削除
           </button>
         )}
       </form>
+
+      {confirming && (
+        <ConfirmDialog
+          message={`「${initial.title}」を削除します。よろしいですか？`}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirming(false)}
+        />
+      )}
     </main>
   )
 }
