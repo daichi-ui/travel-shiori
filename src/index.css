@@ -1287,12 +1287,6 @@ select:focus {
 
 /* ---------- キャラのタイル画像 ---------- */
 
-.trip-thumb-img {
-  flex-shrink: 0;
-  align-self: center;
-  object-fit: contain;
-  filter: drop-shadow(0 3px 0 rgb(43 58 34 / 0.3));
-}
 
 .dialog-character {
   display: flex;

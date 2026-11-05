@@ -5,7 +5,7 @@ import { subscribeMyTrips } from '../lib/trips'
 import { useSchedules } from '../lib/useSchedules'
 import { countDays, formatPeriod } from '../lib/date'
 import { PlusIcon } from '../components/Icons'
-import { CharacterBubble, TripThumbnail } from '../components/Character'
+import { CharacterBubble } from '../components/Character'
 import type { Trip } from '../types'
 
 export function TripListPage() {
@@ -66,7 +66,7 @@ function TripCard({ trip }: { trip: Trip }) {
 
   return (
     <Link to={`/trips/${trip.id}`} className="trip-card">
-      <TripThumbnail tripId={trip.id} />
+      <div className="trip-thumb" aria-hidden="true" />
       <div className="trip-card-body">
         <strong className="trip-card-title">{trip.title}</strong>
         <span className="muted small-text">{formatPeriod(trip.startDate, trip.endDate)}</span>

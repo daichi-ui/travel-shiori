@@ -14,9 +14,6 @@ export const CHARACTERS = {
 
 export type CharacterName = keyof typeof CHARACTERS
 
-// 旅のカードのサムネイルに使うキャラ（旅ごとに固定でばらけさせる）
-const THUMBNAIL_CHARACTERS: CharacterName[] = ['keroro', 'giroro', 'tamama', 'kururu', 'dororo']
-
 export function CharacterBubble({
   character,
   text,
@@ -34,10 +31,4 @@ export function CharacterBubble({
       <p className="speech">{text}</p>
     </div>
   )
-}
-
-export function TripThumbnail({ tripId }: { tripId: string }) {
-  const hash = [...tripId].reduce((sum, c) => sum + c.charCodeAt(0), 0)
-  const character = CHARACTERS[THUMBNAIL_CHARACTERS[hash % THUMBNAIL_CHARACTERS.length]]
-  return <img className="trip-thumb-img" src={character.src} alt="" width={84} height={84} />
 }
