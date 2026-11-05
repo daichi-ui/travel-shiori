@@ -7,6 +7,7 @@ import {
   subscribePacking,
 } from '../lib/packing'
 import { TrashIcon } from '../components/Icons'
+import { CharacterBubble } from '../components/Character'
 import type { PackingItem } from '../types'
 
 // 自分だけの持ち物リスト（旅行に関係なく1つ）
@@ -54,6 +55,19 @@ export function PackingPage() {
         </div>
       </header>
 
+      <CharacterBubble
+        character="pink"
+        reverse
+        size={76}
+        text={
+          !items?.length
+            ? 'わすれものチェックしよ♡ 持っていくものを追加してね！'
+            : done === items.length
+              ? '準備かんぺき！いってらっしゃい♡'
+              : `あと${items.length - done}個！わすれものないかな？`
+        }
+      />
+
       <form className="inline-form" onSubmit={handleAdd}>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例：充電器" />
         <button type="submit" disabled={!name.trim()}>
@@ -63,7 +77,6 @@ export function PackingPage() {
 
       {error && <p className="error">{error}</p>}
       {items === null && !error && <p className="muted">読み込み中…</p>}
-      {items?.length === 0 && <p className="muted empty">持ち物はまだありません。</p>}
       {!!items?.length && (
         <p className="muted small-text">
           {done} / {items.length} 個 準備OK

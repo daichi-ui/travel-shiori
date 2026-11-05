@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext'
+import { CHARACTERS } from '../components/Character'
 
 export function LoginPage() {
   const { login } = useAuth()
@@ -17,9 +18,15 @@ export function LoginPage() {
 
   return (
     <main className="center">
+      <div className="login-characters" aria-hidden="true">
+        <img className="keroro" src={CHARACTERS.keroro.src} alt="" />
+        <img className="pink" src={CHARACTERS.pink.src} alt="" />
+      </div>
       <h1 className="brand">旅のしおり</h1>
-      <p>友だちと一緒に旅行の予定をつくろう</p>
-      <button onClick={handleLogin}>Googleでログイン</button>
+      <p className="speech">みんなで旅の作戦会議であります！</p>
+      <button className="primary-large" onClick={handleLogin}>
+        Googleでログイン
+      </button>
       {error && <p className="error">{error}</p>}
     </main>
   )

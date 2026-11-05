@@ -1,17 +1,22 @@
+/* ケロロ軍曹風のテーマ：ケロロの緑 + 星の黄色 + アニメっぽい太いふちどり */
 :root {
-  --bg: #f7f4ee;
+  --bg: #eaf6d8;
   --surface: #ffffff;
-  --surface-soft: #eef3f9;
-  --text: #1f2a37;
-  --muted: #6b7280;
-  --border: #e6e1d8;
-  --primary: #1f5d99;
-  --primary-soft: #dbe8f6;
-  --danger: #c2410c;
-  --success: #15803d;
-  --radius: 16px;
+  --surface-soft: #fff7cc;
+  --text: #24361a;
+  --muted: #677a5c;
+  --border: #c9e2b3;
+  --primary: #3f9d22;
+  --primary-dark: #2c7414;
+  --primary-soft: #dcf2c8;
+  --star: #ffd23f;
+  --ink: #2b3a22;
+  --danger: #e2483d;
+  --success: #2f8f3a;
+  --radius: 18px;
 
-  font-family: system-ui, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+  font-family: 'M PLUS Rounded 1c', system-ui, 'Hiragino Maru Gothic ProN', 'Hiragino Sans', sans-serif;
+  font-weight: 500;
   line-height: 1.6;
   color: var(--text);
   background: var(--bg);
@@ -900,4 +905,387 @@ select {
 
 .packing-list .icon-button {
   color: var(--muted);
+}
+
+/* =====================================================================
+   ケロロ軍曹テーマ（上のスタイルを上書きする）
+   ===================================================================== */
+
+body {
+  /* うっすら星を散らした背景 */
+  background-color: var(--bg);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M24 14l3 6.5 7 .8-5.2 4.8 1.4 7-6.2-3.5-6.2 3.5 1.4-7-5.2-4.8 7-.8z' fill='%23ffd23f' fill-opacity='.35'/%3E%3Cpath d='M88 74l2 4.4 4.8.5-3.6 3.3 1 4.8-4.2-2.4-4.2 2.4 1-4.8-3.6-3.3 4.8-.5z' fill='%233f9d22' fill-opacity='.14'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 50% -10%, #f6fbe9 0, transparent 60%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+strong,
+.brand,
+.section-title {
+  font-weight: 800;
+}
+
+/* ---------- ボタン：太いふちどり + 下に影でぷっくり ---------- */
+
+button,
+.button {
+  border: 2.5px solid var(--ink);
+  background: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 3px 0 var(--ink);
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.06s ease;
+}
+
+button:active:not(:disabled),
+.button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+button.secondary,
+.button.secondary {
+  background: #fff;
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+.primary-large,
+.fab {
+  border: 3px solid var(--ink);
+  background: var(--primary);
+  box-shadow: 0 5px 0 var(--ink);
+  font-weight: 800;
+}
+
+.fab:active {
+  transform: translateX(-50%) translateY(3px);
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+.text-button,
+.danger-text,
+.icon-button,
+.menu a,
+.menu button,
+.picker-option,
+.day-tab,
+.time-button,
+.step-button {
+  border: none;
+  box-shadow: none;
+}
+
+.text-button:active,
+.danger-text:active,
+.icon-button:active {
+  transform: none;
+}
+
+/* ---------- 見出し ---------- */
+
+.brand {
+  font-family: inherit;
+  font-style: normal;
+  font-size: 26px;
+  color: var(--primary-dark);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand::before {
+  content: '★';
+  color: var(--star);
+  -webkit-text-stroke: 1.5px var(--ink);
+  font-size: 24px;
+}
+
+/* ---------- カード：アニメのセル画っぽいふちどり ---------- */
+
+.trip-card,
+.schedule-card,
+.member-list li,
+.packing-list li,
+.share-banner,
+.dialog {
+  border: 2.5px solid var(--ink);
+  box-shadow: 0 4px 0 rgb(43 58 34 / 0.85);
+}
+
+.trip-card,
+.schedule-card {
+  border-radius: 20px;
+}
+
+.trip-thumb {
+  border: 2px solid var(--ink);
+  background:
+    radial-gradient(circle at 74% 30%, var(--star) 0 9px, transparent 10px),
+    linear-gradient(180deg, transparent 60%, #8fd16a 60% 72%, #5fb53a 72%),
+    linear-gradient(180deg, #cdeeff, #eef9ff);
+}
+
+.share-banner {
+  background: var(--surface-soft);
+}
+
+/* ---------- 日付タブ・下のタブ ---------- */
+
+.day-tab {
+  border: 2px solid var(--ink);
+  font-weight: 700;
+}
+
+.day-tab.active {
+  background: var(--primary);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.tab-bar {
+  border-top: 2.5px solid var(--ink);
+  background: #fffdf3;
+}
+
+.tab {
+  font-weight: 700;
+}
+
+.tab.active {
+  background: var(--primary);
+  color: #fff;
+  border: 2px solid var(--ink);
+}
+
+/* ---------- 予定の種類：小隊メンバーのイメージカラー ---------- */
+
+.category-icon {
+  border: 2px solid var(--ink);
+}
+
+.category-sightseeing {
+  /* ケロロ */
+  background: #dcf2c8;
+  color: #2c7414;
+}
+
+.category-food {
+  /* ギロロ */
+  background: #ffe0dc;
+  color: #c4302a;
+}
+
+.category-move {
+  /* ドロロ */
+  background: #dceffc;
+  color: #2a74b8;
+}
+
+.category-hotel {
+  /* タママ */
+  background: #e4e3fb;
+  color: #45429a;
+}
+
+.category-other {
+  /* クルル */
+  background: #fff3bf;
+  color: #9a7a00;
+}
+
+.timeline::before {
+  border-left: 3px dotted #9bcf7a;
+}
+
+.reservation {
+  border-width: 2px;
+  font-weight: 700;
+}
+
+/* ---------- フォーム ---------- */
+
+input,
+textarea,
+select,
+.time-button,
+.url-link-row {
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--star);
+  outline-offset: 1px;
+}
+
+.form .chip {
+  border: 2px solid var(--ink);
+  font-weight: 700;
+}
+
+.form .chip.active {
+  background: var(--primary);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.picker-option {
+  border: 2px solid var(--border);
+  font-weight: 700;
+}
+
+.picker-option.active {
+  background: var(--primary);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.hour-stepper {
+  border: 2.5px solid var(--ink);
+  background: var(--surface-soft);
+  box-shadow: none;
+}
+
+.step-button {
+  border: 2.5px solid var(--ink);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.step-button:active {
+  background: var(--primary-dark);
+  transform: translateY(2px) scale(0.96);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.hour-value {
+  color: var(--primary-dark);
+}
+
+.badge {
+  border: 1.5px solid var(--ink);
+  background: var(--star);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.packing-list input[type='checkbox'] {
+  accent-color: var(--primary);
+}
+
+/* ---------- キャラクターとふきだし ---------- */
+
+.character-bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.character-bubble.reverse {
+  flex-direction: row-reverse;
+}
+
+.character-bubble img {
+  flex-shrink: 0;
+  height: auto;
+  filter: drop-shadow(0 3px 0 rgb(43 58 34 / 0.25));
+  animation: character-bob 2.6s ease-in-out infinite;
+}
+
+.speech {
+  position: relative;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+  background: #fff;
+  font-weight: 700;
+  line-height: 1.5;
+  box-shadow: 0 3px 0 rgb(43 58 34 / 0.85);
+}
+
+/* ふきだしのしっぽ（キャラの方を向く） */
+.speech::before,
+.speech::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  border-style: solid;
+}
+
+.character-bubble:not(.reverse) .speech::before {
+  left: -13px;
+  border-width: 7px 13px 7px 0;
+  border-color: transparent var(--ink) transparent transparent;
+}
+
+.character-bubble:not(.reverse) .speech::after {
+  left: -8px;
+  border-width: 5px 9px 5px 0;
+  border-color: transparent #fff transparent transparent;
+}
+
+.character-bubble.reverse .speech::before {
+  right: -13px;
+  border-width: 7px 0 7px 13px;
+  border-color: transparent transparent transparent var(--ink);
+}
+
+.character-bubble.reverse .speech::after {
+  right: -8px;
+  border-width: 5px 0 5px 9px;
+  border-color: transparent transparent transparent #fff;
+}
+
+@keyframes character-bob {
+  50% {
+    transform: translateY(-4px) rotate(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .character-bubble img {
+    animation: none;
+  }
+}
+
+.login-characters {
+  position: relative;
+  width: 240px;
+  height: 190px;
+}
+
+.login-characters img {
+  position: absolute;
+  filter: drop-shadow(0 4px 0 rgb(43 58 34 / 0.25));
+}
+
+.login-characters .keroro {
+  left: 0;
+  bottom: 0;
+  width: 180px;
+}
+
+.login-characters .pink {
+  right: -6px;
+  top: 0;
+  width: 92px;
+  transform: rotate(8deg);
+}
+
+.empty-character {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
 }

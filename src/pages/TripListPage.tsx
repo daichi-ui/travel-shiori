@@ -5,6 +5,7 @@ import { subscribeMyTrips } from '../lib/trips'
 import { useSchedules } from '../lib/useSchedules'
 import { countDays, formatPeriod } from '../lib/date'
 import { PlusIcon } from '../components/Icons'
+import { CharacterBubble } from '../components/Character'
 import type { Trip } from '../types'
 
 export function TripListPage() {
@@ -32,6 +33,15 @@ export function TripListPage() {
         </button>
       </header>
 
+      <CharacterBubble
+        character="keroro"
+        text={
+          trips?.length === 0
+            ? 'まだ旅がないであります！さっそく作戦を立てるであります！'
+            : '次の旅の作戦会議であります！'
+        }
+      />
+
       <h2 className="section-title">あなたの旅</h2>
       <Link to="/trips/new" className="button primary-large">
         <PlusIcon /> 新しい旅をつくる
@@ -39,7 +49,6 @@ export function TripListPage() {
 
       {error && <p className="error">旅を読み込めませんでした。</p>}
       {!error && trips === null && <p className="muted">読み込み中…</p>}
-      {trips?.length === 0 && <p className="muted">まだ旅がありません。</p>}
 
       <ul className="trip-list">
         {trips?.map((trip) => (

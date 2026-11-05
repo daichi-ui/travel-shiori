@@ -16,6 +16,7 @@ import {
   UsersIcon,
 } from '../components/Icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { CharacterBubble } from '../components/Character'
 import { shortLink, toLink } from '../lib/url'
 import { RESERVATIONS, type Schedule } from '../types'
 
@@ -111,7 +112,9 @@ export function TripDetailPage() {
 
       {schedules === null && <p className="muted">読み込み中…</p>}
       {schedules !== null && daySchedules.length === 0 && (
-        <p className="muted empty">この日の予定はまだありません。</p>
+        <div className="empty-character">
+          <CharacterBubble character="pink" text="この日の予定はまだないよ♡ 下のボタンから追加してね！" size={76} />
+        </div>
       )}
 
       <ol className="timeline">
