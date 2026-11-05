@@ -501,12 +501,103 @@ button.small {
 
 .dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
 }
 
 button.danger {
   background: var(--danger);
+}
+
+/* ---------- 時刻の選択 ---------- */
+
+.time-picker {
+  gap: 14px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+.time-picker h2 {
+  font-size: 17px;
+}
+
+.time-input {
+  font-size: 28px;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.picker-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.picker-option {
+  padding: 8px 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.picker-option.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.dialog-actions .spacer {
+  flex: 1;
+}
+
+.time-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.time-field {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.time-button {
+  justify-content: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.time-button.empty {
+  color: var(--muted);
+}
+
+.url-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.url-row a {
+  flex-shrink: 0;
+  font-size: 14px;
 }
 
 /* ---------- フォーム ---------- */

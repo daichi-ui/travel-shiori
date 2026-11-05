@@ -43,6 +43,7 @@ export type Schedule = {
   category: Category
   reservation: Reservation
   place: string
+  url: string // 予約ページや地図などのリンク（古い予定には無いことがある）
   memo: string
   createdAt: Timestamp | null
 }

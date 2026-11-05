@@ -7,6 +7,7 @@ import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
 import { BackIcon, CategoryIcon } from '../components/Icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { TimePickerModal } from '../components/TimePickerModal'
 import {
   CATEGORIES,
   RESERVATIONS,
@@ -40,6 +41,7 @@ export function ScheduleFormPage() {
       category: 'sightseeing',
       reservation: 'none',
       place: '',
+      url: '',
       memo: '',
     }
     return <ScheduleForm trip={trip} initial={initial} />
@@ -47,8 +49,8 @@ export function ScheduleFormPage() {
 
   const schedule = schedules?.find((s) => s.id === scheduleId)
   if (!schedule) return <NotFound />
-  const { id: _id, createdAt: _createdAt, ...initial } = schedule
-  return <ScheduleForm trip={trip} scheduleId={scheduleId} initial={initial} />
+  const { id: _id, createdAt: _createdAt, ...rest } = schedule
+  return <ScheduleForm trip={trip} scheduleId={scheduleId} initial={{ ...rest, url: rest.url ?? '' }} />
 }
 
 function ScheduleForm({
@@ -65,6 +67,7 @@ function ScheduleForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
+  const [picking, setPicking] = useState<'startTime' | 'endTime' | null>(null)
   const backTo = `/trips/${trip.id}?day=${initial.date}`
 
   // 期間外になった予定の日付も選べるようにしておく
@@ -83,7 +86,12 @@ function ScheduleForm({
     setSaving(true)
     setError(null)
     try {
-      const input = { ...form, title: form.title.trim(), place: form.place.trim() }
+      const input = {
+        ...form,
+        title: form.title.trim(),
+        place: form.place.trim(),
+        url: form.url.trim(),
+      }
       if (scheduleId) await updateSchedule(trip.id, scheduleId, input)
       else await createSchedule(trip.id, input)
       navigate(`/trips/${trip.id}?day=${form.date}`, { replace: true })
@@ -138,34 +146,55 @@ function ScheduleForm({
 
         <label>
           予定の名前
-          <input required value={form.title} onChange={set('title')} placeholder="例：ホテルにチェックイン" />
+          <input required value={form.title} onChange={set('title')} />
         </label>
 
-        <label>
-          日付
-          <select value={form.date} onChange={set('date')}>
-            {days.map((day, i) => (
-              <option key={day} value={day}>
-                {i + 1}日目 {formatShortDate(day)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <fieldset className="chips">
+          <legend>日付</legend>
+          {days.map((day, i) => (
+            <label key={day} className={form.date === day ? 'chip active' : 'chip'}>
+              <input
+                type="radio"
+                name="date"
+                value={day}
+                checked={form.date === day}
+                onChange={() => setForm((f) => ({ ...f, date: day }))}
+              />
+              {i + 1}日目 {formatShortDate(day)}
+            </label>
+          ))}
+        </fieldset>
 
-        <div className="row">
-          <label>
-            開始時刻
-            <input type="time" value={form.startTime} onChange={set('startTime')} />
-          </label>
-          <label>
-            終了時刻
-            <input type="time" value={form.endTime} onChange={set('endTime')} />
-          </label>
+        <div className="time-fields">
+          {(['startTime', 'endTime'] as const).map((key) => (
+            <div key={key} className="time-field">
+              {key === 'startTime' ? '開始時刻' : '終了時刻'}
+              <button
+                type="button"
+                className={form[key] ? 'time-button' : 'time-button empty'}
+                onClick={() => setPicking(key)}
+              >
+                {form[key] || '--:--'}
+              </button>
+            </div>
+          ))}
         </div>
 
         <label>
           場所
-          <input value={form.place} onChange={set('place')} placeholder="例：新潟駅" />
+          <input value={form.place} onChange={set('place')} />
+        </label>
+
+        <label>
+          URL
+          <span className="url-row">
+            <input type="url" inputMode="url" value={form.url} onChange={set('url')} />
+            {/^https?:\/\//.test(form.url.trim()) && (
+              <a href={form.url.trim()} target="_blank" rel="noopener noreferrer">
+                開く
+              </a>
+            )}
+          </span>
         </label>
 
         <fieldset className="chips">
@@ -205,6 +234,19 @@ function ScheduleForm({
           </button>
         )}
       </form>
+
+      {picking && (
+        <TimePickerModal
+          title={picking === 'startTime' ? '開始時刻' : '終了時刻'}
+          value={form[picking]}
+          onDone={(value) => {
+            setForm((f) => ({ ...f, [picking]: value }))
+            setPicking(null)
+            setError(null)
+          }}
+          onCancel={() => setPicking(null)}
+        />
+      )}
 
       {confirming && (
         <ConfirmDialog
