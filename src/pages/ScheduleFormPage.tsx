@@ -6,7 +6,7 @@ import { createSchedule, deleteSchedule, updateSchedule } from '../lib/schedules
 import { formatShortDate, listDays } from '../lib/date'
 import { NotFound } from './TripFormPage'
 import { BackIcon, CategoryIcon } from '../components/Icons'
-import { toLink } from '../lib/url'
+import { mapsDirectionsUrl, toLink } from '../lib/url'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { TimePickerModal } from '../components/TimePickerModal'
 import {
@@ -42,6 +42,7 @@ export function ScheduleFormPage() {
       category: 'sightseeing',
       reservation: 'none',
       place: '',
+      address: '',
       url: '',
       memo: '',
     }
@@ -51,7 +52,7 @@ export function ScheduleFormPage() {
   const schedule = schedules?.find((s) => s.id === scheduleId)
   if (!schedule) return <NotFound />
   const { id: _id, createdAt: _createdAt, ...rest } = schedule
-  return <ScheduleForm trip={trip} scheduleId={scheduleId} initial={{ ...rest, url: rest.url ?? '' }} />
+  return <ScheduleForm trip={trip} scheduleId={scheduleId} initial={{ ...rest, url: rest.url ?? '', address: rest.address ?? '' }} />
 }
 
 function ScheduleForm({
@@ -92,6 +93,7 @@ function ScheduleForm({
         ...form,
         title: form.title.trim(),
         place: form.place.trim(),
+        address: form.address.trim(),
         // 「店名 https://...」のように貼られても、保存するのは URL 部分だけ
         url: toLink(form.url) ?? form.url.trim(),
       }
@@ -187,6 +189,34 @@ function ScheduleForm({
           場所
           <input value={form.place} onChange={set('place')} />
         </label>
+
+        {/* 「開く」で Google マップのナビ（現在地 → この住所）を起動する。
+            iPhone はリンクを押したときだけアプリが入っていればアプリで開くので、ボタンではなくリンクにする */}
+        <div className="time-field">
+          <label htmlFor="schedule-address">住所</label>
+          <div className="url-row">
+            <input
+              id="schedule-address"
+              autoComplete="street-address"
+              value={form.address}
+              onChange={set('address')}
+            />
+            {form.address.trim() ? (
+              <a
+                className="button open-button"
+                href={mapsDirectionsUrl(form.address)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                開く
+              </a>
+            ) : (
+              <button type="button" className="open-button" disabled>
+                開く
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* 入力欄は普通に編集、右の「開く」で別タブに開く */}
         <div className="time-field">

@@ -8,6 +8,12 @@ export function toLink(text: string): string | null {
   return null
 }
 
+// Google マップで「現在地 → 住所」のナビを開く URL。
+// origin を省くと現在地から。iPhone / Android ではアプリがあればアプリ、なければサイトで開く
+export function mapsDirectionsUrl(address: string) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address.trim())}`
+}
+
 // リンクの表示用に「example.com/path…」のように短くする
 export function shortLink(link: string) {
   try {

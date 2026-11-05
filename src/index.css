@@ -1399,6 +1399,20 @@ select:focus {
   box-shadow: none;
 }
 
+.calendar .calendar-day.holiday {
+  color: var(--danger);
+}
+
+.calendar .calendar-day.selected {
+  color: #fff;
+}
+
+.holiday-name {
+  margin-left: 8px;
+  font-size: 13px;
+  color: var(--danger);
+}
+
 .calendar-day.in-range {
   background: var(--primary-soft);
 }

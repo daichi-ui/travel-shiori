@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CHARACTERS } from './Character'
 import { formatDate, parseDate, toDateValue, WEEKDAYS } from '../lib/date'
 
@@ -29,9 +29,23 @@ export function DatePickerModal({
     return new Date(base.getFullYear(), base.getMonth(), 1)
   })
 
-  const today = toDateValue(new Date())
+  const [today] = useState(() => toDateValue(new Date()))
   const year = month.getFullYear()
   const monthIndex = month.getMonth()
+
+  // 表示中の月の祝日（データが大きいので、カレンダーを開いたときだけ読み込む）
+  const [holidays, setHolidays] = useState<Record<string, string>>({})
+  useEffect(() => {
+    let cancelled = false
+    import('@holiday-jp/holiday_jp').then(({ default: holidayJp }) => {
+      if (cancelled) return
+      const list = holidayJp.between(new Date(year, monthIndex, 1), new Date(year, monthIndex + 1, 0))
+      setHolidays(Object.fromEntries(list.map((h) => [toDateValue(h.date), h.name])))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [year, monthIndex])
   const blanks = new Date(year, monthIndex, 1).getDay()
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate()
   const days = Array.from({ length: daysInMonth }, (_, i) => toDateValue(new Date(year, monthIndex, i + 1)))
@@ -84,9 +98,11 @@ export function DatePickerModal({
             const weekday = (blanks + i) % 7
             const disabled = !!min && day < min
             const inRange = !!from && !!to && day >= from && day <= to
+            const holiday = holidays[day]
             const classes = [
               'calendar-day',
               `weekday-${weekday}`,
+              holiday ? 'holiday' : '',
               day === selected ? 'selected' : '',
               inRange ? 'in-range' : '',
               day === today ? 'today' : '',
@@ -98,7 +114,8 @@ export function DatePickerModal({
                 className={classes.filter(Boolean).join(' ')}
                 disabled={disabled}
                 aria-pressed={day === selected}
-                aria-label={formatDate(day)}
+                aria-label={holiday ? `${formatDate(day)} ${holiday}` : formatDate(day)}
+                title={holiday}
                 onClick={() => setSelected(day)}
               >
                 {i + 1}
@@ -107,7 +124,10 @@ export function DatePickerModal({
           })}
         </div>
 
-        <p className="calendar-selected">{selected ? formatDate(selected) : '日付を選んでください'}</p>
+        <p className="calendar-selected">
+          {selected ? formatDate(selected) : '日付を選んでください'}
+          {selected && holidays[selected] && <span className="holiday-name">{holidays[selected]}</span>}
+        </p>
 
         <div className="dialog-actions">
           <button type="button" className="secondary" onClick={onCancel}>

@@ -101,6 +101,7 @@ trips/{tripId}/schedules/{scheduleId}
   category: "move" | "food" | "sightseeing" | "hotel" | "other"
   reservation: "none" | "todo" | "done"
   place: string
+  address: string          // 住所。「開く」で Google マップのナビ（現在地 → 住所）を起動
   url: string              // 予約ページや地図などのリンク
   memo: string
   createdAt: timestamp
