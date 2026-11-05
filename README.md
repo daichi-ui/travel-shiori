@@ -30,4 +30,4 @@ npx firebase-tools deploy --only firestore:rules --project <プロジェクトID
 | 名前 | 内容 |
 |---|---|
 | `VITE_FIREBASE_*`（6つ） | `.env.local` と同じ値 |
-| `FIREBASE_SERVICE_ACCOUNT` | Firebase Hosting へデプロイするサービスアカウントの JSON |
+| `FIREBASE_SERVICE_ACCOUNT_TRAVEL_SHIORI_18351` | Firebase Hosting へデプロイするサービスアカウントの JSON（`firebase init hosting:github` で自動登録） |
