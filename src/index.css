@@ -759,8 +759,9 @@ button.danger {
 
 .form .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  /* 中身の最小幅に引っぱられて列が広がらないように minmax(0, 1fr) にする */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
 }
 
 input,
@@ -1117,6 +1118,23 @@ input,
 textarea,
 select {
   font-size: 16px;
+}
+
+/* iPhone の Safari は日付欄に独自の最小幅を持たせて列からはみ出すので、独自の見た目をやめて幅に収める */
+input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-height: 46px;
+  text-align: left;
+}
+
+input[type='date']::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.form .row > label {
+  min-width: 0;
 }
 
 input:focus,
